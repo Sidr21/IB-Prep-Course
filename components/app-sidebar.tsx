@@ -25,29 +25,29 @@ import { useAuth } from "@/contexts/auth-context"
 const navMainData = [
   {
     title: "Dashboard",
-    url: "#",
+    url: "/dashboard",
     icon: BookOpen,
     isActive: true,
   },
   {
     title: "Learning Modules",
-    url: "#",
+    url: "/modules",
     icon: Bot,
   },
   {
     title: "Practice Questions",
-    url: "#",
+    url: "/practice",
     icon: Command,
   },
   {
     title: "Mock Interviews",
-    url: "#",
+    url: "/interviews",
     icon: Map,
     badge: "10",
   },
   {
     title: "Job Postings",
-    url: "#",
+    url: "/jobs",
     icon: Settings2,
   },
 ]

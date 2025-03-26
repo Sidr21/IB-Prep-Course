@@ -1,10 +1,9 @@
 "use client"
 
 import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { AppSidebar } from "../../components/app-sidebar"
+import { useRouter, usePathname } from "next/navigation"
+import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,12 +14,25 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import Link from "next/link"
 
-export default function DashboardPage() {
-  const { user, signOut, isLoading } = useAuth()
+const pageTitles: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/modules": "Learning Modules",
+  "/practice": "Practice Questions",
+  "/interviews": "Mock Interviews",
+  "/jobs": "Job Postings",
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const { user, isLoading } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login")
@@ -30,6 +42,8 @@ export default function DashboardPage() {
   if (isLoading || !user) {
     return null
   }
+
+  const currentPageTitle = pageTitles[pathname] || "Page"
 
   return (
     <SidebarProvider>
@@ -41,27 +55,25 @@ export default function DashboardPage() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbLink asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
+                {pathname !== "/dashboard" && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{currentPageTitle}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div>
+        {children}
       </SidebarInset>
     </SidebarProvider>
   )
-}
-
+} 
